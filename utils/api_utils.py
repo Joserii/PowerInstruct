@@ -5,6 +5,11 @@ from openai import OpenAI
 from typing import Optional, Union, List
 import anthropic
 
+# Here we put a temporal api key for test, please replace it with your own api key.
+# Supported Model List: ['qwen-max', 'qwen-coder-plus', 'qwen2.5-7b-instruct']
+os.environ["DASHSCOPE_API_KEY"] = 'sk-658896d9b7754ca69fa869308704606d'
+os.environ["DASHSCOPE_BASE_URL"] = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
 
 qwen_series_model = ['qwen-max', 'qwen-coder-plus', 'qwen2.5-7b-instruct']
 openai_series_model = ['o1', 'o1-mini', 'gpt-4o', 'gpt-4o-mini']

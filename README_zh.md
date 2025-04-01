@@ -80,6 +80,9 @@ python run.py
    - 执行代码生成
    - 下载生成的数据集（支持JSON/JSONL格式）
 
+![quickstart](./imgs/demo_1.png)
+![quickstart](./imgs/demo_2.png)
+
 ## 项目结构
 
 ```

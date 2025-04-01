@@ -78,6 +78,9 @@ python run.py
    - Execute code generation  
    - Download the generated dataset (JSON/JSONL format supported)  
 
+![quickstart](./imgs/demo_1.png)  
+![quickstart](./imgs/demo_2.png)  
+
 ## Project Structure  
 
 ```
