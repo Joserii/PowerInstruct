@@ -1,0 +1,121 @@
+.json-view {
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.json-view::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.json-view::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.json-view::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.json-view::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.json-view .collapsible {
+    position: relative;
+    cursor: pointer;
+    padding-left: 15px;
+}
+
+.json-view .collapsible::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    transform: rotate(0);
+    transition: transform 0.2s ease;
+    color: #666;
+    font-size: 10px;
+}
+
+.json-view .collapsible.expanded::before {
+    transform: rotate(90deg);
+}
+
+.json-view .json-line {
+    padding: 2px 0 2px 20px;
+    border-left: 1px solid rgba(0,0,0,0.1);
+    margin-left: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.json-view .json-line:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.json-view .key {
+    color: #2c5282;
+    font-weight: 500;
+}
+
+.json-view .string {
+    color: #38a169;
+}
+
+.json-view .number {
+    color: #805ad5;
+}
+
+.json-view .boolean {
+    color: #d69e2e;
+}
+
+.json-view .null {
+    color: #e53e3e;
+}
+
+.json-view .bracket {
+    color: #4a5568;
+    font-weight: bold;
+}
+
+/* 按钮样式优化 */
+.btn-group {
+    gap: 5px;
+}
+
+.btn-group .btn {
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* JSON预览容器样式 */
+#json-preview-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+#json-preview-container .card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding: 12px 15px;
+}
+
+#json-preview-container .card-body {
+    padding: 15px;
+}
