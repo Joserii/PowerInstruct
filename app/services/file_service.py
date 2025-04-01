@@ -136,7 +136,6 @@ class FileService:
                 
                 all_files, all_files_path = self._merge_train_data(extracted_files, unique_filename)
 
-
                 return jsonify({
                     'success': True,
                     'message': f'Successfully extracted {len(extracted_files)} files',

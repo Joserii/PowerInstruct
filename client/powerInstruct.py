@@ -18,7 +18,7 @@ from utils.prompt_template.directgen_prompt import *
 from utils.run_python_utils import *
 from utils.file_utils import *
 from utils.logger import logger
-from utils.idealab_utils import idealab_request
+from utils.api_utils import api_request
 from utils.metrics import MetricsCollector
 
 
@@ -631,7 +631,7 @@ def _get_llm_feedback(args, current_code, failed_cases):
 下面请开始分析失败原因：
 """
     # import ipdb; ipdb.set_trace()
-    feedback_from_llm, token_prompt, token_cli = idealab_request(feedback_prompt, model=args.model_codegen)
+    feedback_from_llm, token_prompt, token_cli = api_request(feedback_prompt, model=args.model_codegen)
     metrics.add_tokens(token_prompt, token_cli)
 
     return feedback_from_llm

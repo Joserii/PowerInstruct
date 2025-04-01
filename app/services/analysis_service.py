@@ -1,5 +1,5 @@
 from flask import jsonify, request
-# from utils.idealab_utils import idealab_request
+from utils.api_utils import api_request
 from utils.logger import logger
 from utils.system_prompt import *
 from io import StringIO
@@ -216,10 +216,12 @@ class AnalysisService:
         :param system_prompt: 系统提示词
         :return: 分析结果
         """
-        final_prompt = str(system_prompt['prompt']) + file_content
+        system_prompt = str(system_prompt['prompt'])
+        final_prompt = system_prompt + file_content
         try:
             logger.info(f"Starting prompt analysis \nSystem prompt length: {len(system_prompt)} \Content length: {len(file_content)}")
-            messages, token_prompt, token_compli = idealab_request(final_prompt, model=model_id)
+            # import ipdb; ipdb.set_trace()
+            messages, token_prompt, token_compli = api_request(prompt=final_prompt, model_name=model_id)
             # 实现具体的 Prompt 分析逻辑
             logger.info("Analysis completed successfully")
             result = {
@@ -252,7 +254,7 @@ class AnalysisService:
             # 实现具体的 CodeGen 分析逻辑
             logger.info(f"Starting codegen analysis \nSystem prompt length: {len(codegen_prompt)} \Content length: {len(file_content)}")
             
-            messages, token_prompt, token_compli = idealab_request(final_prompt, model=model_id)
+            messages, token_prompt, token_compli = api_request(prompt=final_prompt, model_name=model_id)
             logger.info("Analysis completed successfully")
             result = {
                 'mode': 'codegen',

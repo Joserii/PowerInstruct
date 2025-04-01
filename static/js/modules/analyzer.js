@@ -453,17 +453,18 @@ export class Analyzer {
 
 
     // 使用种子数据生成标准格式
-    async generateStandardFormat(seedData, seedModel) {
+    async generateStandardFormat(seedData, seedModel, all_files_path) {
         this.updateProcessStatus('Generating standard format from seed data...');
         
         const genData = {
             mode: 'prompt',
             model_id: seedModel,
             template: this.config.templateManager.getCurrentTemplate(),
-            file_content: JSON.stringify(seedData)  // 将种子数据转换为字符串
+            file_content: JSON.stringify(seedData),  // 将种子数据转换为字符串
+            filepath: all_files_path
         };
 
-        // console.log('Generate standard format data:', genData);
+        console.log('Generate standard format data:', genData);
 
         try {
             const response = await apiService.analyzeFile(genData);
@@ -546,13 +547,14 @@ export class Analyzer {
             const fileInfo = await this.prepareProcess();
             const selectedModels = this.config.modelSelector.getSelectedModels();
             this.analyzeDataPath = fileInfo.all_files_path;
+            // console.log('All files path:', fileInfo.all_files_path);
 
             // 1. 选择随机种子
             const randomSeed = await this.selectRandomSeed(fileInfo.all_files_path);
             this.updateProcessStatus('Selected random seed data');
 
             // 2. 生成标准格式
-            const standardData = await this.generateStandardFormat(randomSeed, selectedModels.seedModel);
+            const standardData = await this.generateStandardFormat(randomSeed, selectedModels.seedModel, this.analyzeDataPath);
             
             // 3. 处理结果
             await this.handleProcessResult(standardData);

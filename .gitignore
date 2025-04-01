@@ -1,8 +1,6 @@
-log/
 logs/
 data/
 output/
-
 
 .ipynb_checkpoints/
 
@@ -11,6 +9,6 @@ output/
 
 .pytest_cache/
 __pycache__/
-.DS_Store
+*.pyc
 
-tmp.txt
+*.DS_Store*

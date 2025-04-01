@@ -4,11 +4,11 @@
 
 PowerInstruct 是一个基于大模型的电力系统指令数据集自动化生成工具。该工具支持两种生成方式：
 
-1. **Seed Generation**：先使用GPT4/Qwen等大模型生成标准格式的种子数据。
+1. **Seed Generation**：先使用GPT4o/Qwen等大模型生成标准格式的种子数据。
 2. **Code Generation**：使用Claude/o1等模型，基于种子数据生成转换代码，实现批量数据生成。
 
 主要特点：
-- 支持多种大模型（GPT-4、Claude、Qwen等）
+- 支持多种大模型（GPT-4o、Claude、Qwen等）
 - 批量数据处理能力
 - 实时执行结果展示
 - 支持JSON/JSONL格式导出
@@ -22,35 +22,44 @@ git clone https://github.com/Joserii/PowerInstruct.git
 cd PowerInstruct
 ```
 
-2. 检查分支，并切换到 dev 分支(后续开源不需要这一步)
-
-```bash
-# 查看当前分支
-git branch
-
-# 切换到dev分支
-git checkout dev
-
-# 如果dev分支不存在，从远程拉取并切换
-git checkout -b dev origin/dev
-
-# 确保代码是最新的
-git pull origin dev
-```
-
-3. 创建并激活虚拟环境
+2. 创建并激活虚拟环境
 ```bash
 conda create -n powerinstruct python=3.10
 conda activate powerinstruct
 ```
 
-4. 安装依赖
+3. 安装依赖
 ```bash
 pip install -r requirements.txt
 ```
 
-5. 配置环境变量(OpenAI, Anthropic, Qwen API Key 支持)
-TODO
+4. 配置环境变量(OpenAI, Anthropic, Qwen API Key 支持)
+这里需要手动在终端中设置如下环境变量：
+
+- Linux/macOS (bash/zsh)：
+```bash
+export OPENAI_API_KEY="sk-xxxxxxx"
+export OPENAI_BASE_URL="https://api.openai.com/v1"
+
+export ANTHROPIC_API_KEY="sk-xxxxxxx"
+export ANTHROPIC_BASE_URL="https://api.anthropic.com/v1"
+
+export DASHSCOPE_API_KEY="sk-xxxxxxxxx"
+export DASHSCOPE_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
+```
+
+- Windows：(Powershell)
+```bash
+$env:OPENAI_API_KEY="sk-xxxxxx"
+$env:OPENAI_BASE_URL="https://api.openai.com/v1"
+
+$env:ANTHROPIC_API_KEY="sk-xxxxxx"
+$env:ANTHROPIC_BASE_URL="https://api.anthropic.com/v1"
+
+$env:DASHSCOPE_API_KEY="sk-xxxxxxx"
+$env:DASHSCOPE_BASE_URL="https://dashscope.aliyuncs.com/compatible-mode/v1"
+```
+
 
 
 ## 快速开始
@@ -120,10 +129,20 @@ powerinstruct/
 1. 模型配置
 ```python
 SUPPORT_MODELS = [
-    "gpt-4",
-    "claude-37",
+    # Qwen 系列
     "qwen-max",
-    "gemini-pro"
+    "qwen-coder-plus",
+    "qwen2.5-7b-instruct",
+
+    # OpenAI 系列
+    "o1",
+    "o1-mini",
+    "gpt-4o",
+    "gpt-4o-mini",
+
+    # Anthropic Claude 系列
+    "claude-3-7-sonnet",
+    "claude-3-5-sonnet"
 ]
 ```
 

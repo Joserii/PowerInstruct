@@ -62,7 +62,7 @@ export class ModelSelector {
             
             // 检查是否可以启用分析按钮
             this.checkEnableAnalyzeButton();
-            // console.log('Current selection:', this.selectedModels);
+            console.log('Current selection:', this.selectedModels);
             
         } catch (error) {
             console.error('Model selection error:', error);

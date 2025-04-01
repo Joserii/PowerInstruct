@@ -112,6 +112,7 @@ export class FileUploader {
                 apiService.uploadZipFile(formData, this.updateProgress.bind(this)) :
                 apiService.uploadFile(formData, this.updateProgress.bind(this))
             );
+            // console.log(response.data)
             this.handleUploadSuccess(response.data, isZip);
         } catch (error) {
             this.handleUploadError(error);

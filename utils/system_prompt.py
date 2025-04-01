@@ -3,7 +3,7 @@ import json
 from config.settings import *
 from utils.logger import logger
 from utils.prompt_template.directgen_prompt import datagen_1shot_system_prompt
-from utils.prompt_template.codegen_prompt import codegen_1shot_system_prompt, codegen_1shot_multiple_data
+from utils.prompt_template.codegen_prompt import codegen_1shot_system_prompt
 
 
 # TODO 1 normalize the template content
@@ -59,4 +59,4 @@ if __name__ == '__main__':
     
     with open('/Users/czy/projects/baohuchu_demo/data/output.json', 'r') as f:
         output_format = json.load(f)
-    print(f"Code generation system prompt:\n {codegen_1shot_multiple_data(input_format, output_format)}\n\n")
+    # print(f"Code generation system prompt:\n {codegen_1shot_multiple_data(input_format, output_format)}\n\n")
