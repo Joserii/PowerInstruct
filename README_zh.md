@@ -6,6 +6,7 @@ PowerInstruct 是一个基于大模型的电力系统指令数据集自动化生
 
 1. **Seed Generation**：先使用GPT4o/Qwen等大模型生成标准格式的种子数据。
 2. **Code Generation**：使用Claude/o1等模型，基于种子数据生成转换代码，实现批量数据生成。
+![example](./imgs/example.png)
 
 主要特点：
 - 支持多种大模型（GPT-4o、Claude、Qwen等）

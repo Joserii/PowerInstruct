@@ -7,6 +7,8 @@ PowerInstruct is an automated dataset generation tool for power system instructi
 1. **Seed Generation**: Uses models like GPT-4o/Qwen to generate seed data in a standard format.  
 2. **Code Generation**: Uses models like Claude/o1 to generate transformation code based on the seed data, enabling batch dataset generation.  
 
+![example](./imgs/example.png)
+
 ### Key Features  
 - Supports multiple large language models (GPT-4o, Claude, Qwen, etc.)  
 - Batch data processing capabilities  
