@@ -1,0 +1,16 @@
+log/
+logs/
+data/
+output/
+
+
+.ipynb_checkpoints/
+
+.vscode/
+.idea/
+
+.pytest_cache/
+__pycache__/
+.DS_Store
+
+tmp.txt
