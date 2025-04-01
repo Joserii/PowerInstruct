@@ -91,3 +91,4 @@ wheel==0.45.1
 wsproto==1.2.0
 yarl==1.18.3
 zipp==3.21.0
+openai==1.70.0

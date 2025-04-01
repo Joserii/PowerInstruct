@@ -18,7 +18,7 @@ PowerInstruct 是一个基于大模型的电力系统指令数据集自动化生
 
 1. 克隆项目
 ```bash
-git clone git@gitlab.alibaba-inc.com:baohuchu/PowerInstruct.git
+git clone https://github.com/Joserii/PowerInstruct.git
 cd PowerInstruct
 ```
 
@@ -49,26 +49,8 @@ conda activate powerinstruct
 pip install -r requirements.txt
 ```
 
-4. 配置环境变量(idealab版)
-
-Windows:
-```bash
-# 在 C:\Users\[您的用户名]\ 目录下创建 .env 文件
-SERVER_API_KEY=your_api_key
-```
-
-Mac/Linux:
-```bash
-# 在 ~/.bashrc 或 ~/.zshrc 中添加
-export SERVER_API_KEY=<your_api_key>
-
-# 或在 home 目录创建 .env 文件
-echo "SERVER_API_KEY=<your_api_key>" >> ~/.env
-```
-
 5. 配置环境变量(OpenAI, Anthropic, Qwen API Key 支持)
-
-    TODO
+TODO
 
 
 ## 快速开始
@@ -152,40 +134,3 @@ SUPPORT_MODELS = [
     "codegen": "your_code_template"
 }
 ```
-
-## 开发指南
-
-1. 代码规范
-   - 遵循PEP 8规范
-   - 使用TypeScript进行类型检查
-   - 编写单元测试
-
-2. 提交规范
-   - feat: 新功能
-   - fix: 修复bug
-   - docs: 文档更新
-   - style: 代码格式
-   - refactor: 重构
-
-## TODO
-
-- [ ] 添加更多模型支持
-- [ ] 改进错误处理机制
-- [ ] 添加数据验证功能
-- [ ] 优化UI交互体验
-- [ ] 完善单元测试
-
-## 许可证
-
-MIT License
-
-## 贡献者
-
-- Zhuoyue Chen
-
-## 联系方式
-
-TODO: 换成公开联系方式
-
-- Issues: [PowerInstruct Issues Page](https://code.alibaba-inc.com/baohuchu/PowerInstruct/issues)
-- Email: chenzhuoyue.czy@alibaba-inc.com
