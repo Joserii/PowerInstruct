@@ -46,7 +46,6 @@ def merge_template():
                 'message': 'Missing required parameters'
             }), 400
 
-        # 调用模板合并服务
         merged_content = analysis_service.merge_codegen_template(raw_data, seed_content, template)
         
         return jsonify({

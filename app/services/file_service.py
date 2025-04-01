@@ -14,13 +14,13 @@ class FileService:
     def handle_file_upload(self, request):
         try:
             logger.info("Starting file upload process")
-            # 检查文件是否上传
+            # Check if the file is uploaded
             if 'file' not in request.files:
                 logger.warning("No file uploaded in request")
                 return jsonify({'error': 'No file uploaded'}), 400
             
             file = request.files['file']
-            # 检查文件名是否为空
+            # Check if the file name is empty
             if file.filename == '':
                 logger.warning("Empty filename received")
                 return jsonify({'error': 'No selected file'}), 400
@@ -29,13 +29,13 @@ class FileService:
             logger.info(f"Processing file: {filename}")
             
             if file and allowed_single_file(filename):
-                # 获取原始文件扩展名
+                # Get the original file extension
                 original_filename = filename
                 _, original_extension = os.path.splitext(original_filename)
 
-                # 生成唯一文件名，保留原始扩展名
+                # Generate a unique file name, keeping the original extension
                 unique_filename = generate_unique_filename(original_filename, existing_extension=original_extension)
-                # 构建保存路径
+                # Build the save path
                 save_path = os.path.join(UPLOAD_FOLDER, unique_filename)
                 mode = request.form.get('mode', 'prompt')
                 file.save(save_path)
@@ -79,16 +79,16 @@ class FileService:
                 return (filename.startswith('__MACOSX') or 
                     filename.startswith('._') or 
                     filename.startswith('.') or 
-                    '/.DS_Store' in filename)
+                    '.DS_Store' in filename)
 
             if file and allowed_zip_file(file.filename):
-                # 获取原始文件扩展名
+                # Get the original file extension
                 original_filename = file.filename
                 _, original_extension = os.path.splitext(original_filename)
 
-                # 生成唯一文件名，保留原始扩展名
+                # Generate a unique file name, keeping the original extension
                 unique_filename = generate_unique_filename(original_filename, existing_extension=original_extension)
-                # 构建保存路径
+                # Build the save path
                 save_zip_path = os.path.join(UPLOAD_FOLDER, unique_filename)
                 folder_name = Path(save_zip_path).stem
                 save_path = os.path.join(os.path.dirname(save_zip_path), folder_name)
@@ -96,21 +96,17 @@ class FileService:
                 file.save(save_zip_path)
                 logger.info(f"File successfully saved: {save_zip_path}")
 
-                # 解压文件
                 extracted_files = []
 
                 with zipfile.ZipFile(save_zip_path, 'r') as zip_ref:
                     for name in zip_ref.namelist():
                         try:
-                            # 解码文件名
-                            real_name = decode_zip_filename(name)                    
-                            # 跳过系统文件
+                            
+                            real_name = decode_zip_filename(name)
                             if is_system_file(real_name):
                                 continue
-                            # 检查文件类型
                             if not real_name.lower().endswith(('.json', '.xml', '.txt')):
                                 continue
-                            # 构建解压路径
                             extract_path = os.path.join(save_path, real_name)
                             os.makedirs(os.path.dirname(extract_path), exist_ok=True)
                             with zip_ref.open(name) as source, open(extract_path, 'wb') as target:
@@ -178,51 +174,46 @@ class FileService:
             })
         
     def handle_file_deletion(self, file_path):
-        """删除指定文件的路由"""
+        """Delete the route of the specified file"""
         try:
             logger.info(f"Starting file deletion process for: {file_path}")
             
-            # 获取文件名（去除路径）
             filename = os.path.basename(file_path)
-            
-            # 构建完整的文件路径
             full_path = os.path.join(UPLOAD_FOLDER, filename)
-            
-            # 规范化路径
             normalized_path = os.path.normpath(full_path)
             normalized_upload_folder = os.path.normpath(UPLOAD_FOLDER)
             
-            # 安全检查：确保文件路径在上传目录内
+            # Security check: Make sure the file path is within the upload directory
             if not normalized_path.startswith(normalized_upload_folder):
                 logger.warning(f"Attempted to delete file outside upload directory: {file_path}")
                 return jsonify({
                     'status': 'error',
-                    'message': '非法的文件路径'
+                    'message': 'Illegal file path'
                 }), 403
 
-            # 检查文件是否存在
+            # Check if a file exists
             if not os.path.exists(normalized_path):
                 logger.warning(f"File not found: {file_path}")
                 return jsonify({
                     'status': 'error',
-                    'message': '文件不存在'
+                    'message': 'File does not exist'
                 }), 404
 
-            # 检查文件是否在允许删除的目录中
+            # Check if the file is in a directory where deletion is allowed
             if not normalized_path.startswith(normalized_upload_folder):
                 logger.warning(f"Attempted to delete file outside upload directory: {file_path}")
                 return jsonify({
                     'status': 'error',
-                    'message': '无权删除此文件'
+                    'message': 'No permission to delete this file'
                 }), 403
 
-            # 删除文件
+            # Deleting files
             os.remove(normalized_path)
             logger.info(f"File successfully deleted: {filename}")
 
             return jsonify({
                 'status': 'success',
-                'message': '文件删除成功',
+                'message': 'File deleted successfully',
                 'deleted_file': filename
             }), 200
 
@@ -230,16 +221,14 @@ class FileService:
             logger.error(f"File deletion error: {str(e)}")
             return jsonify({
                 'status': 'error',
-                'message': f'删除文件失败: {str(e)}'
+                'message': f'Failed to delete file: {str(e)}'
             }), 500
 
-
-    # file_service.py
     def load_json_batch(self):
         try:
-            # 从查询参数获取文件路径
+            # Get the file path from the query parameters
             file_path = request.args.get('path')
-            print(f"Requested file path: {file_path}")  # 调试日志
+            print(f"Requested file path: {file_path}")
             
             if not file_path:
                 return jsonify({
@@ -247,14 +236,12 @@ class FileService:
                     'message': 'Missing file path parameter'
                 }), 400
 
-            # 检查文件是否存在
             if not os.path.exists(file_path):
                 return jsonify({
                     'code': 404,
                     'message': f'File not found: {file_path}'
                 }), 404
 
-            # 读取并解析 JSON 文件
             try:
                 with open(file_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)

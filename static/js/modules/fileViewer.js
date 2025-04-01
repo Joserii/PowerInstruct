@@ -5,7 +5,7 @@ export class JsonViewer {
         this.collapseAllBtn = document.getElementById('collapse-all');
         this.copyBtn = document.getElementById('copy-json');
         this.jsonData = null;
-        this.defaultCollapsed = true; // 默认折叠
+        this.defaultCollapsed = true;
 
         this.setupEventListeners();
     }

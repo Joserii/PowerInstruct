@@ -8,9 +8,8 @@ import { SidebarManager } from './modules/sidebarManager.js';
 import { JsonViewer } from './modules/fileViewer.js';
 
 document.addEventListener('DOMContentLoaded', function() {
-    // 获取所有必要的DOM元素
+
     const config = {
-        // DOM元素
         singleFileUpload: document.getElementById('single-file-upload'),
         batchFileUpload: document.getElementById('batch-file-upload'),
         fileInput: document.getElementById('file-input'),
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
         previewArea: document.getElementById('preview-area'),
         templateTitle: document.getElementById('template-title'),
 
-        // 模板相关的DOM元素
         templateContent: document.getElementById('template-content'),
         promptTemplate: document.getElementById('prompt-template'),
         codegenTemplate: document.getElementById('codegen-template'),
@@ -46,12 +44,11 @@ document.addEventListener('DOMContentLoaded', function() {
         singleModeBtn: document.getElementById('single-mode'),
         batchModeBtn: document.getElementById('batch-mode'),
         messageArea: document.getElementById('message-area'),
-        // 侧边栏相关的DOM元素
+
         sidebar: document.getElementById('sidebar'),
         sidebarToggle: document.getElementById('sidebarToggle'),
     };
 
-    // 初始化各个模块, 并更新配置对象
     const sidebarManager = new SidebarManager(config);
     config.sidebarManager = sidebarManager;
     const jsonViewer = new JsonViewer(config, 'json-viewer');
@@ -60,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const modelSelector = new ModelSelector(config);
     const fileUploader = new FileUploader(config);
     
-    // 更新配置对象
     config.templateManager = templateManager;
     config.modelSelector = modelSelector;
     config.fileUploader = fileUploader;
@@ -68,13 +64,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const modeManager = new ModeManager(config);
     const analyzer = new Analyzer(config);
     
-    // 更新配置对象
     config.modeManager = modeManager;
     config.analyzer = analyzer;
 
     const codeExecutor = new CodeExecutor(config);
 
-    // 初始状态设置
     config.analyzeBtn.disabled = true;
     config.executeCodeBtn.disabled = true;
 });

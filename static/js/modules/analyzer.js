@@ -7,7 +7,6 @@ export class Analyzer {
         PROCESSING: 'processing'
     };
 
-    // 模式常量
     static MODES = {
         PROMPT: 'prompt',
         CODEGEN: 'codegen',
@@ -21,12 +20,11 @@ export class Analyzer {
             currentMode: null,
             loadingInterval: null
         };
-        // 添加数据收集数组
         this.generatedData = {
-            raw_data: null,          // 原始数据
-            seed_data: null,         // 种子数据
-            generated_code: null,    // 生成的代码
-            execution_result: null   // 执行结果
+            raw_data: null, 
+            seed_data: null,
+            generated_code: null,
+            execution_result: null
         };
                 
         this.selectedData = null;
@@ -38,7 +36,6 @@ export class Analyzer {
     init() {
         this.setupEventListeners();
     }
-    // 初始化组件
     initComponents() {
         this.codegenOutput = this.config.targetData;
         this.seedgenOutput = this.config.generateSamplesContainer;
@@ -58,7 +55,6 @@ export class Analyzer {
         this.setupEventListeners();
     }
 
-    // 收集生成的数据
     collectGeneratedData({ type, data }) {
         this.generatedData[type] = data;
     }
@@ -68,7 +64,7 @@ export class Analyzer {
     setupEventListeners() {
         const buttonHandlers = {
             generateSamples: this.startProcess.bind(this),
-            generateCodeBtn: () => this.generateCode()  // 修改这里
+            generateCodeBtn: () => this.generateCode() 
         };
 
         Object.entries(buttonHandlers).forEach(([key, handler]) => {
@@ -90,21 +86,18 @@ export class Analyzer {
             });
         }
 
-        // 添加复制按钮事件
         if (this.buttons.copySamplesBtn) {
             this.buttons.copySamplesBtn.addEventListener('click', () => {
                 this.copyToClipboard(this.codegenOutput.value);
             });
         }
 
-        // 添加导出按钮事件监听
         if (this.buttons.exportJson) {
             this.buttons.exportJson.addEventListener('click', () => this.exportData('json'));
         }
         if (this.buttons.exportJsonl) {
             this.buttons.exportJsonl.addEventListener('click', () => this.exportData('jsonl'));
         }
-        // 添加指令数据导出按钮事件监听
         if (this.buttons.exportInstructionJson) {
             this.buttons.exportInstructionJson.addEventListener('click', () => 
                 this.exportInstructionData('json'));
@@ -118,7 +111,6 @@ export class Analyzer {
 
     async exportInstructionData(format = 'json') {
         try {
-            // 准备指令数据
             const instructionData = await this.prepareInstructionData();
             
             if (!instructionData.length) {
@@ -130,14 +122,12 @@ export class Analyzer {
             let mimeType;
 
             if (format === 'jsonl') {
-                // JSONL格式
                 content = instructionData
                     .map(data => JSON.stringify(data))
                     .join('\n');
                 filename = `instruction_data_${Date.now()}.jsonl`;
                 mimeType = 'text/plain';
             } else {
-                // JSON格式
                 content = JSON.stringify(instructionData, null, 2);
                 filename = `instruction_data_${Date.now()}.json`;
                 mimeType = 'application/json';
@@ -151,7 +141,6 @@ export class Analyzer {
         }
     }
 
-    // 准备指令数据
     async prepareInstructionData() {
         const instructionData = [];
         const executionResult = this.generatedData.execution_result;
@@ -159,16 +148,14 @@ export class Analyzer {
         if (executionResult && executionResult.success_results) {
             executionResult.success_results.forEach(result => {
                 try {
-                    // 获取结果字符串并解析为JSON
                     const resultStr = result.result.result;
                     const resultData = JSON.parse(resultStr);
                     
-                    // 构建指令数据对象
                     const instruction = {
                         // timestamp: new Date().toISOString(),
                         input: resultData.input,
                         output: resultData.output,
-                        // raw_data: result.input  // 保留原始数据以供参考
+                        // raw_data: result.input
                     };
                     
                     instructionData.push(instruction);
@@ -182,36 +169,30 @@ export class Analyzer {
     }
 
 
-    // 添加代码生成方法
     async generateCode() {
         try {
-            // 验证模型选择
             await this.validateModelSelection();
-            
-            // 获取所选模型
             const selectedModels = this.config.modelSelector.getSelectedModels();
 
-            // 准备代码生成数据
             const codegenData = {
                 mode: 'codegen',
                 model_id: selectedModels.codeModel,
                 template: this.merged_codegen_prompt,
-                raw_content: this.selectedData,  // 使用保存的原始数据
-                standard_instruction: this.seedgenOutput.value // 使用种成的标准格式
+                raw_content: this.selectedData, // Use the saved original data
+                standard_instruction: this.seedgenOutput.value 
             };
 
             // console.log('Codegen data:', codegenData);
 
-            // 更新按钮状态
             this.state.isAnalyzing = true;
             this.updateButtonStates(true);
             this.state.loadingInterval = UIHelper.showLoading(this.codegenOutput);
 
-            // 发送代码生成请求
+            // Send code generation request
             const response = await apiService.analyzeFile(codegenData);
 
             if (response.data.code === 200) {
-                // 处理成功响应
+                // Handle successful response
                 await this.handleCodeGenSuccess(response.data);
             } else {
                 throw new Error(response.data.message || 'Code generation failed');
@@ -220,61 +201,56 @@ export class Analyzer {
         } catch (error) {
             this.handleCodeGenError(error);
         } finally {
-            // 恢复状态
             this.state.isAnalyzing = false;
             this.updateButtonStates(false);
             UIHelper.clearLoading(this.state.loadingInterval);
         }
     }
 
-    // 处理代码生成成功
     handleCodeGenSuccess(data) {
         const aiResponse = data.ai_response || (data.data && data.data.ai_response);
         
         if (aiResponse) {
-            // 收集生成的代码
             this.collectGeneratedData({
                 type: 'generated_code',
                 data: aiResponse
             });
-            // 更新代码生成输出框
             const formattedContent = typeof aiResponse === 'object' 
                 ? JSON.stringify(aiResponse, null, 2) 
                 : aiResponse;
 
             this.codegenOutput.textContent = formattedContent;
 
-            // 启用执行代码按钮
             if (this.buttons.executeCode) {
                 this.buttons.executeCode.disabled = false;
             }
         } else {
-            this.codegenOutput.textContent = '无生成结果';
+            this.codegenOutput.textContent = 'No results generated';
         }
     }
 
-    // 处理代码生成错误
+    // Handle code generation errors
     handleCodeGenError(error) {
         console.error('Code generation error:', error);
         
-        // 在代码生成输出框中显示错误
+        // Display errors in the code generation output box
         if (this.codegenOutput) {
             this.codegenOutput.innerHTML = `<div class="text-danger">
-                代码生成错误: ${error.message || '未知错误'}
+                Code Generation Errors: ${error.message || 'Unknown error'}
             </div>`;
         }
     }
 
-    // 合并模板方法
+    // Merge Template Method
     async mergeCodegenTemplate() {
         try {
-            // 获取种子生成的结果
+            // Get the result of seed generation
             const seedOutput = this.seedgenOutput.value;
             if (!seedOutput) {
                 throw new Error('No seed generation result available');
             }
 
-            // 准备合并请求数据
+            // Preparing merge request data
             const mergeData = {
                 raw_content: this.selectedData,
                 seed_content: seedOutput,
@@ -282,18 +258,18 @@ export class Analyzer {
                 template: this.config.templateManager.getCodegenTemplate()
             };
 
-            // 更新按钮状态
+            // Update button state
             this.buttons.mergeTemplate.disabled = true;
             this.buttons.mergeTemplate.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Merging...';
 
-            // 发送合并请求
+            // Send a merge request
             const response = await apiService.mergeTemplate(mergeData);
             // console.log('Merge template response:', response.data);
             
             this.merged_codegen_prompt = response.data.merged_codegen_prompt;
 
             if (response.data.code === 200) {
-                // 使用 TemplateManager 更新模板内容
+                // Use TemplateManager to update template content
                 this.config.templateManager.setCodegenTemplate(response.data.merged_content);
             } else {
                 throw new Error(response.data.message || 'Template merge failed');
@@ -302,17 +278,17 @@ export class Analyzer {
         } catch (error) {
             this.handleError(error, 'code');
         } finally {
-            // 恢复按钮状态
+            // Restore button state
             this.buttons.mergeTemplate.disabled = false;
             this.buttons.mergeTemplate.innerHTML = '<i class="bi bi-arrow-right"></i> Merge Codegen Template';
         }
     }
 
-    // 复制到剪贴板
+    // Copy to Clipboard
     async copyToClipboard(text) {
         try {
             await navigator.clipboard.writeText(text);
-            // 可以添加一个临时的成功提示
+            // You can add a temporary success prompt
             const originalText = this.buttons.copySamples.innerHTML;
             this.buttons.copySamples.innerHTML = '<i class="bi bi-check"></i> Copied!';
             setTimeout(() => {
@@ -323,7 +299,7 @@ export class Analyzer {
         }
     }
 
-    // 验证模型选择
+    // Validation model selection
     async validateModelSelection() {
         try {
             return this.config.modelSelector.validateModelSelection();
@@ -336,7 +312,7 @@ export class Analyzer {
 
     async exportData(format = 'json') {
         try {
-            // 准备导出数据数组
+            // Prepare to export data array
             const exportDataArray = await this.prepareExportData();
 
             let content;
@@ -344,14 +320,14 @@ export class Analyzer {
             let mimeType;
 
             if (format === 'jsonl') {
-                // 转换为JSONL格式 - 每行一条数据
+                // Convert to JSONL format - one data per line
                 content = exportDataArray
                     .map(data => JSON.stringify(data))
                     .join('\n');
                 filename = `generated_data_${Date.now()}.jsonl`;
                 mimeType = 'text/plain';
             } else {
-                // JSON格式 - 数组形式
+                // JSON format - array form
                 content = JSON.stringify(exportDataArray, null, 2);
                 filename = `generated_data_${Date.now()}.json`;
                 mimeType = 'application/json';
@@ -365,7 +341,7 @@ export class Analyzer {
         }
     }
 
-    // 下载文件
+    // Download File
     downloadFile(content, filename, mimeType) {
         const blob = new Blob([content], { type: mimeType });
         const url = URL.createObjectURL(blob);
@@ -378,33 +354,33 @@ export class Analyzer {
         URL.revokeObjectURL(url);
     }
 
-    // 准备导出数据
+    // Preparing to export data
     async prepareExportData() {
         const exportDataArray = [];
         
-        // 获取执行结果
+        // Get execution results
         const executionResult = this.generatedData.execution_result;
         
         if (executionResult && executionResult.success_results) {
-            // 处理成功的结果
+            // Handling successful results
             executionResult.success_results.forEach(result => {
                 exportDataArray.push({
                     timestamp: new Date().toISOString(),
-                    raw_data: result.input,            // 原始输入数据
-                    prediction: result.result,         // 预测结果
-                    seed_data: this.generatedData.seed_data,      // 种子数据
-                    generated_code: this.generatedData.generated_code  // 生成的代码
+                    raw_data: result.input,            // Original input data
+                    prediction: result.result,         // Prediction results
+                    seed_data: this.generatedData.seed_data,      // Seed data
+                    generated_code: this.generatedData.generated_code  // Generated Code
                 });
             });
             
-            // 添加统计信息
+            // Add statistics
             exportDataArray.push({
                 type: 'statistics',
                 data: executionResult.statistics,
                 timestamp: new Date().toISOString()
             });
             
-            // 如果有失败的结果，也添加进去
+            // If there are any failed results, add them in as well.
             if (executionResult.failed_results && executionResult.failed_results.length > 0) {
                 executionResult.failed_results.forEach(result => {
                     exportDataArray.push({
@@ -416,7 +392,7 @@ export class Analyzer {
                 });
             }
         } else {
-            // 如果没有执行结果，只导出基本信息
+            // If there is no execution result, only basic information is exported
             exportDataArray.push({
                 timestamp: new Date().toISOString(),
                 raw_data: this.selectedData,
@@ -428,7 +404,7 @@ export class Analyzer {
         return exportDataArray;
     }
 
-    // 从文件中随机选择一条数据
+    // Randomly select a piece of data from the file
     async selectRandomSeed(filePath) {
         try {
             this.updateProcessStatus('Reading data file...');
@@ -452,7 +428,7 @@ export class Analyzer {
     }
 
 
-    // 使用种子数据生成标准格式
+    // Generate standard format using seed data
     async generateStandardFormat(seedData, seedModel, all_files_path) {
         this.updateProcessStatus('Generating standard format from seed data...');
         
@@ -460,7 +436,7 @@ export class Analyzer {
             mode: 'prompt',
             model_id: seedModel,
             template: this.config.templateManager.getCurrentTemplate(),
-            file_content: JSON.stringify(seedData),  // 将种子数据转换为字符串
+            file_content: JSON.stringify(seedData),  // Convert the seed data to a string
             filepath: all_files_path
         };
 
@@ -477,7 +453,7 @@ export class Analyzer {
         }
     }
 
-    // 使用标准格式生成代码
+    // Generate code using standard format
     async processCodeGeneration(fileInfo, codeModel) {
         this.updateProcessStatus('Generating code based on standard format...');
 
@@ -499,7 +475,7 @@ export class Analyzer {
     }
 
 
-    // 统一的处理入口
+    // Unified processing entry
     async startProcess() {
         const currentMode = this.config.fileUploader.getCurrentMode();
         // console.log('Current mode:', currentMode);
@@ -511,7 +487,7 @@ export class Analyzer {
         }
     }
     
-    // 验证和准备处理
+    // Verify and prepare for processing
     async prepareProcess() {
         const fileInfo = this.getFileInfo();
         if (!fileInfo) {
@@ -522,7 +498,7 @@ export class Analyzer {
         return fileInfo;
     }
     
-    // 获取文件信息
+    // Get file information
     getFileInfo() {
         return this.config.fileUploader.getCurrentMode() === 'batch' 
             ? this.config.fileUploader.getCurrentFileInfo()
@@ -531,7 +507,7 @@ export class Analyzer {
     
 
 
-    // 更新处理状态
+    // Update processing status
     updateProcessStatus(message, isError = false) {
         const timestamp = new Date().toLocaleTimeString();
         const statusMessage = `[${timestamp}] ${message}`;
@@ -541,7 +517,7 @@ export class Analyzer {
         this.seedgenOutput.scrollTop = this.seedgenOutput.scrollHeight;
     }
 
-    // 批处理流程
+    // Batch Process
     async batchProcess() {
         await this.executeProcess(async () => {
             const fileInfo = await this.prepareProcess();
@@ -549,30 +525,30 @@ export class Analyzer {
             this.analyzeDataPath = fileInfo.all_files_path;
             // console.log('All files path:', fileInfo.all_files_path);
 
-            // 1. 选择随机种子
+            // 1. Choose random seed
             const randomSeed = await this.selectRandomSeed(fileInfo.all_files_path);
             this.updateProcessStatus('Selected random seed data');
 
-            // 2. 生成标准格式
+            // 2. Generate standard format
             const standardData = await this.generateStandardFormat(randomSeed, selectedModels.seedModel, this.analyzeDataPath);
             
-            // 3. 处理结果
+            // 3. Processing results
             await this.handleProcessResult(standardData);
         });
     }
     
-    // 单文件处理流程
+    // Single file processing flow
     async singleProcess() {
         await this.executeProcess(async () => {
             const fileInfo = await this.prepareProcess();
             const selectedModels = this.config.modelSelector.getSelectedModels();
 
-            // 处理逻辑
+            // Processing Logic
             const response = await this.generateStandardFormat(fileInfo, selectedModels.seedModel);
             await this.handleProcessResult(response);
         });
     }
-    // 统一的执行过程封装
+    // Unified execution process encapsulation
     async executeProcess(processFunc) {
         try {
             this.startProcessing();
@@ -583,14 +559,12 @@ export class Analyzer {
             this.endProcessing();
         }
     }
-    // 开始处理
     startProcessing() {
         this.state.isAnalyzing = true;
         this.updateButtonStates(true);
         this.state.loadingInterval = UIHelper.showLoading(this.seedgenOutput);
     }
 
-    // 结束处理
     endProcessing() {
         this.state.isAnalyzing = false;
         this.updateButtonStates(false);
@@ -598,7 +572,6 @@ export class Analyzer {
     }
 
 
-    // 更新按钮状态
     updateButtonStates(isProcessing) {
         Object.values(this.buttons).forEach(button => {
             if (button) {
@@ -609,7 +582,7 @@ export class Analyzer {
         });
     }
 
-    // 更新按钮文本
+
     updateButtonText(button, isProcessing) {
         if (isProcessing) {
             button.originalText = button.textContent;
@@ -619,7 +592,6 @@ export class Analyzer {
         }
     }
 
-    // 处理响应结果
     async handleProcessResult(response) {
         if (response.data.code === 200) {
             await this.handleSuccess(response.data);
@@ -628,11 +600,9 @@ export class Analyzer {
         }
     }
 
-    // 统一的成功处理
     async handleSuccess(data) {
         const aiResponse = data.ai_response || (data.data && data.data.ai_response);
         if (aiResponse) {
-            // 收集种子数据
             this.collectGeneratedData({
                 type: 'seed_data',
                 data: aiResponse
@@ -645,13 +615,13 @@ export class Analyzer {
             this.updateOutput('No results available');
         }
     }
-    // 统一的错误处理
+
     handleError(error) {
         console.error('Process error:', error);
         this.updateOutput(error.message, true);
     }
 
-    // 更新输出
+
     updateOutput(content, isError = false) {
         if (this.seedgenOutput) {
             const formattedContent = typeof content === 'object' 
@@ -673,4 +643,4 @@ export class Analyzer {
     getanalyzeDataPath() {
         return this.analyzeDataPath;
     }
- }
+}

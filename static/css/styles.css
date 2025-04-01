@@ -9,23 +9,22 @@
     margin-bottom: 15px;
 }
 .upload-section {
-    flex: 3; /* 占用3份宽度 */
-    min-width: 0; /* 防止内容溢出 */
+    flex: 3; 
+    min-width: 0;
 }
 .model-section {
-    flex: 3; /* 占用2份宽度 */
+    flex: 3;
     min-width: 0;
     margin-bottom: 20px;
 }
 
 .card {
-    margin-bottom: 15px;  /* 减小卡片间距 */
+    margin-bottom: 15px;
 }
 .card-body {
-    padding: 15px;  /* 减小内边距 */
+    padding: 15px;
 }
 
-/* 文件上传的样式 */
 .file-upload-container {
     border: 2px dashed #ccc;
     border-radius: 4px;
@@ -97,40 +96,40 @@
 }
 
 #target-data {
-    white-space: pre-wrap;     /* 保留换行，但允许文字自动换行 */
-    word-wrap: break-word;      /* 长单词强制换行 */
-    overflow-wrap: break-word;  /* 现代浏览器的换行属性 */
+    white-space: pre-wrap;  
+    word-wrap: break-word;  
+    overflow-wrap: break-word; 
     font-size: 13px;
-    width: 100%;                /* 占满整个容器宽度 */
+    width: 100%;
 }
+
 #execute-result {
-    white-space: pre-wrap;     /* 保留换行，但允许文字自动换行 */
-    word-wrap: break-word;      /* 长单词强制换行 */
-    overflow-wrap: break-word;  /* 现代浏览器的换行属性 */
-    width: 100%;                /* 占满整个容器宽度 */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
     font-size: 13px;
 }
 
 #template-content {
-    white-space: pre-wrap;     /* 保留换行，但允许文字自动换行 */
-    word-wrap: break-word;      /* 长单词强制换行 */
-    overflow-wrap: break-word;  /* 现代浏览器的换行属性 */
-    width: 100%;                /* 占满整个容器宽度 */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    width: 100%;
 }
 
 #prompt-template {
-    white-space: pre-wrap;     /* 保留换行，但允许文字自动换行 */
-    word-wrap: break-word;      /* 长单词强制换行 */
-    overflow-wrap: break-word;  /* 现代浏览器的换行属性 */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word; 
 }
+
 #codegen-template {
-    white-space: pre-wrap;     /* 保留换行，但允许文字自动换行 */
-    word-wrap: break-word;      /* 长单词强制换行 */
-    overflow-wrap: break-word;  /* 现代浏览器的换行属性 */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
-
-/* 添加到 styles.css 中 */
 .model-selection {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -181,7 +180,6 @@
     font-weight: bold;
 }
 
-/* 响应式布局 */
 @media (max-width: 768px) {
     .model-buttons {
         flex-direction: column;
@@ -192,7 +190,6 @@
     }
 }
 
-/* 文本编辑器样式 */
 .template-editor {
     font-family: 'Source Code Pro', monospace;
     font-size: 12px;
@@ -246,7 +243,6 @@
     border: none;
 }
 
-/* 滚动条样式 */
 .template-editor.json-view::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -291,8 +287,6 @@
     margin-bottom: 5px;
 }
 
-
-/* 模板容器样式 */
 .template-container {
     width: 100%;
     min-height: 300px;
@@ -384,7 +378,6 @@
     font-size: 14px;
 }
 
-/* Target Data 编辑器样式 */
 .target-editor {
     font-family: 'Arial', sans-serif;
     font-size: 14px;
@@ -405,7 +398,6 @@
     box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
 }
 
-/* Python代码编辑器样式 */
 .python-editor {
     font-family: monospace;
     font-size: 13px;

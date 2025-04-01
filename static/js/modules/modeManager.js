@@ -9,23 +9,20 @@ export class ModeManager {
         this.splitContainer = config.splitContainer;
         this.singleContainer = config.singleContainer;
 
-        // 添加新的DOM元素引用
         this.fillCodeBtn = document.getElementById('fill-code');
         
         this.init();
     }
 
     init() {
-        // 复制按钮的点击事件
         const copySamplesBtn = document.getElementById('copy-samples');
         if (copySamplesBtn) {
             copySamplesBtn.addEventListener('click', async () => {
                 const sampleOutput = document.getElementById('sample-output');
                 try {
                     await navigator.clipboard.writeText(sampleOutput.value);
-                    // 可选：添加复制成功的视觉反馈
                     const originalText = copySamplesBtn.innerHTML;
-                    copySamplesBtn.innerHTML = '<i class="bi bi-check"></i> 已复制';
+                    copySamplesBtn.innerHTML = '<i class="bi bi-check"></i> Copied';
                     setTimeout(() => {
                         copySamplesBtn.innerHTML = originalText;
                     }, 2000);
@@ -52,7 +49,6 @@ export class ModeManager {
         const promptContent = this.templateManager.prompt;
         const codegenContent = this.templateManager.codegen;
 
-        // 设置分栏内容
         if (this.promptTemplate) {
             this.promptTemplate.value = promptContent;
             // console.log('Prompt template set:', this.promptTemplate.value);
@@ -62,7 +58,6 @@ export class ModeManager {
             // console.log('Code template set:', this.codeTemplate.value);
         }
 
-        // 设置单栏内容
         const templateContent = document.getElementById('template-content');
         if (templateContent) {
             templateContent.value = promptContent;
@@ -70,7 +65,6 @@ export class ModeManager {
     }
 
     setupEventListeners() {
-        // 模式切换按钮的监听
         this.buttons.forEach(button => {
             button.addEventListener('click', (e) => {
                 const mode = button.dataset.mode;
@@ -80,12 +74,9 @@ export class ModeManager {
     }
 
     handleModeChange(clickedButton, newMode) {
-        // 更新按钮状态
         this.buttons.forEach(btn => btn.classList.remove('active'));
         clickedButton.classList.add('active');
-        // 添加点击动画效果
         this.addClickAnimation(clickedButton);
-        // 设置新模式
         this.setMode(newMode);
     }
 
@@ -100,11 +91,8 @@ export class ModeManager {
         if (this.currentMode === mode) return;
         this.currentMode = mode;
         this.updateViewMode(mode);
-        // 更新模板管理器
         this.templateManager.setMode(mode);
-        // 触发模式改变事件
         this.triggerModeChangeEvent(mode);
-        // console.log(`Switched to ${mode} mode`);
     }
 
     updateViewMode(mode) {
@@ -119,7 +107,6 @@ export class ModeManager {
                 this.splitContainer.style.display = 'none';
                 this.singleContainer.style.display = 'block';
                 
-                // 更新单栏内容
                 if (this.templateContent) {
                     const content = mode === MODES.PROMPT 
                         ? this.promptTemplate?.value || ''
@@ -129,7 +116,6 @@ export class ModeManager {
                 break;
         }
         
-        // 更新模板标题
         const templateTitle = document.getElementById('template-title');
         if (templateTitle) {
             templateTitle.innerHTML = mode === MODES.PROMPT 
@@ -139,7 +125,6 @@ export class ModeManager {
     }
 
     triggerModeChangeEvent(mode) {
-        // 创建自定义事件
         const event = new CustomEvent('modeChange', {
             detail: { mode: mode }
         });
@@ -150,7 +135,6 @@ export class ModeManager {
         return this.currentMode;
     }
 
-    // 禁用/启用指定模式
     disableMode(mode) {
         const button = this.buttons.find(btn => btn.dataset.mode === mode);
         if (button) {
@@ -166,7 +150,6 @@ export class ModeManager {
         }
     }
     
-    // 程序化切换模式
     switchMode(mode) {
         const button = this.buttons.find(btn => btn.dataset.mode === mode);
         if (button && !button.disabled) {

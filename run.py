@@ -2,7 +2,7 @@ import os
 from app import create_app
 from config.settings import LOGS_FOLDER, OUTPUT_FOLDER
 
-# 确保必要的目录存在
+# Make sure necessary directories exist
 os.makedirs(LOGS_FOLDER, exist_ok=True)
 os.makedirs(OUTPUT_FOLDER, exist_ok=True)
 

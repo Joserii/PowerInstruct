@@ -19,21 +19,18 @@ export class FileUploader {
     }
 
     setupEventListeners() {
-        // 单文件上传区域事件
         // this.setupDropZone(
         //     this.config.singleFileUpload,
         //     this.config.fileInput,
         //     this.handleSingleFileUpload.bind(this)
         // );
 
-        // 压缩包上传区域事件
         this.setupDropZone(
             this.config.batchFileUpload,
             this.config.zipInput,
             this.handleZipFileUpload.bind(this)
         );
 
-        // 模式切换事件
         // this.config.singleModeBtn.addEventListener('change', () => this.toggleUploadMode('single'));
         this.config.batchModeBtn.addEventListener('change', () => this.toggleUploadMode('batch'));
     }
@@ -66,7 +63,6 @@ export class FileUploader {
     async handleSingleFileUpload(file) {
         try {
             FileValidator.validateSingleFile(file);
-            // 如果是 JSON 文件，预览其内容
             if (file.type === 'application/json' || file.name.endsWith('.json')) {
                 this.previewJsonFile(file);
             }
@@ -76,7 +72,6 @@ export class FileUploader {
         }
     }
 
-    // 添加 JSON 预览方法
     previewJsonFile(file) {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -140,26 +135,23 @@ export class FileUploader {
     handleSingleData(data) {
         this.uploadedFileInfo = data;
         UIHelper.updateSingleFile(data, this.config.previewArea, (deleteFilePath, newUploadData) => {
-            // 处理删除后的重新上传
+            
             if (newUploadData) {
                 this.uploadedFileInfo = newUploadData;
                 UIHelper.showSuccess(newUploadData, this.config.previewArea);
-                // 如果是 JSON 文件，预览内容
+                
                 if (newUploadData.file_type === 'json') {
                     this.fetchAndPreviewJson(newUploadData.file_path);
                 } else {
                     this.jsonViewer.hide();
                 }
-                // 更新按钮状态
                 this.config.analyzeBtn.disabled = !this.config.selectedModel;
                 
-                // 触发自定义事件
                 const event = new CustomEvent('fileUploaded', {
                     detail: { fileData: newUploadData }
                 });
                 window.dispatchEvent(event);
             } else {
-                // 仅删除的情况
                 this.uploadedFileInfo = null;
                 this.config.analyzeBtn.disabled = true;
                 this.jsonViewer.hide();
@@ -171,7 +163,6 @@ export class FileUploader {
     }
 
 
-    // 添加获取并预览 JSON 文件的方法
     async fetchAndPreviewJson(filePath) {
         try {
             const response = await apiService.fetchJsonContent(filePath);
@@ -205,7 +196,7 @@ export class FileUploader {
 
         this.config.previewArea.innerHTML = '';
         this.config.analyzeBtn.disabled = true;
-        this.jsonViewer.hide(); // 切换模式时隐藏 JSON 预览
+        this.jsonViewer.hide();
     }
 
     clearSingleUploadState() {
@@ -224,22 +215,18 @@ export class FileUploader {
         return this.uploadedFileInfo;
     }
 
-    // 获取压缩包中的所有文件信息
     getExtractedFiles() {
         return this.extractedFiles;
     }
 
-    // 获取所有文件的路径
     getAllFilesPath() {
         return this.all_files_path;
     }
 
-    // 获取当前上传模式
     getCurrentMode() {
         return 'batch';
     }
 
-    // 获取当前上传的文件信息（统一接口，根据模式返回不同的数据）
     getCurrentFileInfo() {
         if (this.currentMode === 'single') {
             return this.uploadedFileInfo;

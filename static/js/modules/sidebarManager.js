@@ -4,7 +4,7 @@ export class SidebarManager {
         this.sidebar = config.sidebar;
         this.sidebarToggle = config.sidebarToggle;
         this.sidebarIcon = document.getElementById('sidebarIcon');
-        this.isOpen = false; // 添加状态跟踪
+        this.isOpen = false; // Add status tracking
         this.init();
     }
 
@@ -30,12 +30,12 @@ export class SidebarManager {
     }
 
     initializeEventListeners() {
-        // 打开侧边栏
+        // Open the sidebar
         this.sidebarToggle.addEventListener('click', () => {
             this.toggleSidebar();
         });
 
-        // 关闭按钮事件
+        // Close button event
         const closeBtn = this.sidebar.querySelector('.close-btn');
         if (closeBtn) {
             closeBtn.addEventListener('click', () => {
@@ -43,7 +43,6 @@ export class SidebarManager {
             });
         }
 
-        // 遮罩层点击事件
         const overlay = document.querySelector('.sidebar-overlay');
         if (overlay) {
             overlay.addEventListener('click', () => {
@@ -51,7 +50,6 @@ export class SidebarManager {
             });
         }
 
-        // ESC键关闭
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.isOpen) {
                 this.closeSidebar();
@@ -71,17 +69,17 @@ export class SidebarManager {
         this.sidebar.classList.add('active');
         document.querySelector('.sidebar-overlay').classList.add('active');
         this.sidebarIcon.classList.remove('bi-question-circle');
-        this.sidebarIcon.classList.add('bi-x-circle'); // 改变图标为关闭图标
+        this.sidebarIcon.classList.add('bi-x-circle'); 
         this.isOpen = true;
-        this.sidebarToggle.title = "关闭使用指南";
+        this.sidebarToggle.title = "Close User Guide";
     }
 
     closeSidebar() {
         this.sidebar.classList.remove('active');
         document.querySelector('.sidebar-overlay').classList.remove('active');
         this.sidebarIcon.classList.remove('bi-x-circle');
-        this.sidebarIcon.classList.add('bi-question-circle'); // 恢复原始图标
+        this.sidebarIcon.classList.add('bi-question-circle'); 
         this.isOpen = false;
-        this.sidebarToggle.title = "使用流程指南";
+        this.sidebarToggle.title = "Usage Process Guide";
     }
 }

@@ -5,14 +5,14 @@ from openai import OpenAI
 from typing import Optional, Union, List
 import anthropic
 
-# Here we put a temporal api key for test, please replace it with your own api key.
+# Here we put a temporal Qwen-Series api key for test, please replace it with your own api key.
+# If you want to use other models, please replace the api key and base url with your own.
 # Supported Model List: ['qwen-max', 'qwen-coder-plus', 'qwen2.5-7b-instruct']
 os.environ["DASHSCOPE_API_KEY"] = 'sk-658896d9b7754ca69fa869308704606d'
 os.environ["DASHSCOPE_BASE_URL"] = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
-
 qwen_series_model = ['qwen-max', 'qwen-coder-plus', 'qwen2.5-7b-instruct']
-openai_series_model = ['o1', 'o1-mini', 'gpt-4o', 'gpt-4o-mini']
+openai_series_model = ['o1-preview-0912', 'o1-mini-0912', 'gpt-4o-0806', 'gpt-4o-mini', 'o1-mini', 'o1', 'gpt-4o']
 anthropic_series_model = ['claude-3-7-sonnet-20250219', 'claude-3-5-sonnet-20241022']
 
 def api_request(
@@ -85,8 +85,8 @@ def openai_request(
         messages=messages,
         **kwargs
     )
-    output = response.choices[0].message.content.strip()
-    return output, 0, 0
+    # output = response.choices[0].message.content.strip()
+    return response, 0, 0
 
 
 def anthropic_request(
@@ -118,7 +118,7 @@ def test_anthropic():
 def test_openai():
     response, token_prompt, token_compli = api_request(
         prompt= 'who are you?',
-        model_name='gpt-4o'
+        model_name='o1'
     )
     return response, token_prompt, token_compli
     
@@ -130,11 +130,19 @@ def test_qwen():
     return response, token_prompt, token_compli
 
 if __name__ == '__main__':
-    response, token_prompt, token_compli = test_anthropic()
-    print(response, token_prompt, token_compli)
-    # response, token_prompt, token_compli = test_openai()
+    # response, token_prompt, token_compli = test_anthropic()
     # print(response, token_prompt, token_compli)
+    response, token_prompt, token_compli = test_openai()
+    print(response, token_prompt, token_compli)
     # response, token_prompt, token_compli = test_qwen()
     # print(response, token_prompt, token_compli)
     
-    
+    # from openai import OpenAI
+    # client = OpenAI()
+
+    # response = client.responses.create(
+    #     model="gpt-4o-mini",
+    #     input="Write a one-sentence bedtime story about a unicorn."
+    # )
+
+    # print(response.output_text)

@@ -62,7 +62,7 @@ export class ModelSelector {
             
             // 检查是否可以启用分析按钮
             this.checkEnableAnalyzeButton();
-            console.log('Current selection:', this.selectedModels);
+            // console.log('Current selection:', this.selectedModels);
             
         } catch (error) {
             console.error('Model selection error:', error);
@@ -101,11 +101,11 @@ export class ModelSelector {
         const buttons = type === 'seed' ? this.seedModelButtons : this.codeModelButtons;
         
         buttons.forEach(btn => {
-            btn.classList.remove('active', 'btn-primary', 'btn-success', 'btn-info', 'btn-warning');
+            btn.classList.remove('active', 'btn-primary', 'btn-info', 'btn-warning');
             if (btn.dataset.model.includes('gpt')) {
                 btn.classList.add('btn-outline-primary');
-            } else if (btn.dataset.model.includes('gemini')) {
-                btn.classList.add('btn-outline-success');
+            } else if (btn.dataset.model.includes('o1')) {
+                btn.classList.add('btn-outline-primary');
             } else if (btn.dataset.model.includes('qwen')) {
                 btn.classList.add('btn-outline-info');
             } else if (btn.dataset.model.includes('claude')) {
@@ -115,13 +115,13 @@ export class ModelSelector {
     }
 
     updateButtonStyle(button) {
-        button.classList.remove('btn-outline-primary', 'btn-outline-success', 'btn-outline-info', 'btn-outline-warning');
+        button.classList.remove('btn-outline-primary', 'btn-outline-info', 'btn-outline-warning');
         button.classList.add('active');
         
         if (button.dataset.model.includes('gpt')) {
             button.classList.add('btn-primary');
-        } else if (button.dataset.model.includes('gemini')) {
-            button.classList.add('btn-success');
+        } else if (button.dataset.model.includes('o1')) {
+            button.classList.add('btn-primary');
         } else if (button.dataset.model.includes('qwen')) {
             button.classList.add('btn-info');
         } else if (button.dataset.model.includes('claude')) {

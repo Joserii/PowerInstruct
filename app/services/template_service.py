@@ -5,7 +5,7 @@ from utils.system_prompt import load_user_templates, save_user_templates
 
 class TemplateService:
     def __init__(self):
-        self.default_templates = load_user_templates() # 获取默认模板
+        self.default_templates = load_user_templates()
 
 
     def get_templates(self):

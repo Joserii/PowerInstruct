@@ -85,7 +85,7 @@
     font-weight: bold;
 }
 
-/* 按钮样式优化 */
+/* Button style optimization */
 .btn-group {
     gap: 5px;
 }
@@ -102,7 +102,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* JSON预览容器样式 */
+/* JSON preview container styles */
 #json-preview-container {
     background: white;
     border-radius: 8px;

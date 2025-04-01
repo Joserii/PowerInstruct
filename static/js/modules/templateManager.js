@@ -84,7 +84,6 @@ export class TemplateManager {
         if (this.templateTitle) {
             this.templateTitle.textContent = title;
         }
-        // 更新分栏视图
         if (this.splitPromptTemplate) {
             this.splitPromptTemplate.value = promptContent;
         }
@@ -166,18 +165,15 @@ export class TemplateManager {
 
     setCodegenTemplate(content) {
         this.codegenTemplate = content;
-        // 如果在分栏模式下，同时更新视图
         if (this.splitCodegenTemplate) {
             this.splitCodegenTemplate.value = content;
         }
-        // 触发change事件
         if (this.splitCodegenTemplate) {
             const event = new Event('change');
             this.splitCodegenTemplate.dispatchEvent(event);
         }
     }
 
-    // 添加获取编辑器元素的方法
     getCodegenTemplateEditor() {
         return this.splitCodegenTemplate;
     }

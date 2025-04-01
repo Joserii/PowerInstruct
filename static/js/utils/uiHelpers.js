@@ -25,7 +25,7 @@ export class UIHelper {
     }
 
     static showSuccess(fileData, container) {
-        // 转换文件大小为可读格式
+        // Convert the file size to a readable format
         const formatFileSize = (bytes) => {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -33,11 +33,11 @@ export class UIHelper {
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         };
-        // 获取文件扩展名
+        // Get the file extension
         const getFileExtension = (filename) => {
             return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
         };
-        // 创建包含详细信息的HTML
+        // Create HTML with detailed information
         const infoHtml = `
             <div class="card mt-3">
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
@@ -131,27 +131,27 @@ export class UIHelper {
                         `;
 
 
-                        // 添加新文件输入的事件监听
+                        // Add event listener for new file input
                         const fileInput = container.querySelector('#file-input');
                         if (fileInput) {
                             fileInput.addEventListener('change', async (event) => {
                                 const file = event.target.files[0];
                                 if (file) {
-                                    // 创建 FormData 对象
+                                    // Create a FormData object
                                     const formData = new FormData();
                                     formData.append('file', file);
 
                                     try {
-                                        // 显示上传进度
+                                        // Display upload progress
                                         UIHelper.showProgress(container);
 
-                                        // 使用 apiService 上传文件
+                                        // Use apiService to upload files
                                         const uploadResponse = await apiService.uploadFile(formData, (progressEvent) => {
                                             UIHelper.updateProgress(progressEvent, container);
                                         });
 
                                         if (uploadResponse.status === 200) {
-                                            // 调用成功回调（如果存在）
+                                            // Call success callback (if any)
                                             if (typeof onDelete === 'function') {
                                                 onDelete(filePath, uploadResponse.data);
                                             }
@@ -164,7 +164,7 @@ export class UIHelper {
                             });
                         }
                         
-                        // 如果提供了删除回调，则调用它
+                        // If a delete callback is provided, call it
                         if (typeof onDelete === 'function') {
                             onDelete(filePath);
                         }
@@ -192,19 +192,19 @@ export class UIHelper {
                 </div>
             </div>
         `;
-        // 添加删除按钮的点击事件监听
+        // Add a click event listener for the delete button
         container.querySelectorAll('.delete-file').forEach(button => {
             button.addEventListener('click', async (e) => {
                 const filePath = e.target.dataset.path;
                 try {
-                    // 使用 apiService 发送删除请求
+                    // Use apiService to send a delete request
                     const response = await apiService.deleteFile(filePath);
                     if (response.status === 200) {
-                        // 从DOM中移除该文件项
+                        // Remove the file item from the DOM
                         const fileItem = e.target.closest('.list-group-item');
                         fileItem.remove();
                         
-                        // 从文件数组中移除该文件
+                        // Remove the file from the files array
                         const fileIndex = files.findIndex(f => f.path === filePath);
                         if (fileIndex !== -1) {
                             files.splice(fileIndex, 1);

@@ -11,10 +11,8 @@ export class APIService {
             }
         });
 
-        // 添加请求拦截器
         this.axios.interceptors.request.use(
             config => {
-                // 在发送请求之前做些什么
                 return config;
             },
             error => {
@@ -22,7 +20,6 @@ export class APIService {
             }
         );
 
-        // 添加响应拦截器
         this.axios.interceptors.response.use(
             response => {
                 return response;
@@ -35,19 +32,16 @@ export class APIService {
 
     handleError(error) {
         if (error.response) {
-            // 服务器响应出错
             return {
-                message: error.response.data.message || '服务器错误',
+                message: error.response.data.message || 'Server Error',
                 status: error.response.status
             };
         } else if (error.request) {
-            // 请求未收到响应
             return {
-                message: '网络错误，请检查您的网络连接',
+                message: 'Network error, please check your network connection',
                 status: 0
             };
         } else {
-            // 请求配置出错
             return {
                 message: error.message,
                 status: -1

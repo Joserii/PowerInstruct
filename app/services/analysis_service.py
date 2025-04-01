@@ -7,31 +7,65 @@ from utils.run_python_utils import TimeoutException, run_code, process_markdown_
 from utils.prompt_template.codegen_prompt import merge_codegen_template_en
 from client.powerInstruct import run_single_data
 
+
+
+from flask import request, jsonify
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+
 class AnalysisService:
     def __init__(self):
         self.templates = load_user_templates()
     
-    # 数据清洗
+    # Data cleaning
     def data_cleaning(self, data):
         try:
+            # Get JSON data
             data = request.json or {}
             raw_data = data.get('raw_data', [])
+
+            if not isinstance(raw_data, list):
+                return jsonify({'code': 400, 'message': 'Invalid input format: raw_data should be a list'}), 400
+
+            cleaned_data = []
+            for item in raw_data:
+                if isinstance(item, dict):
+                    # Clean each dictionary item
+                    cleaned_item = {k: self.clean_value(v) for k, v in item.items()}
+                    cleaned_data.append(cleaned_item)
+                else:
+                    logger.warning(f"Skipping non-dict item: {item}")
+
             return jsonify({
-                'cleaned_data': raw_data,
-                'message': 'successfully cleaned data'
+                'cleaned_data': cleaned_data,
+                'message': 'Successfully cleaned data'
             }), 200
-        
+
         except Exception as e:
             logger.error(f"Data cleaning failed: {str(e)}", exc_info=True)
             return jsonify({'code': 500, 'message': str(e)}), 500
 
+    def clean_value(self, value):
+        """Clean a single value"""
+        if isinstance(value, str):
+            value = value.strip()           # Remove leading and trailing spaces
+            value = value.replace("\n", " ").replace("\r", "")  # Remove line breaks
+        elif isinstance(value, (int, float)):
+            pass        # The value type remains unchanged
+        elif value is None:
+            value = ""  # Replace None with an empty string
+        return value
+
     def analyze_fault(self, data):
-        """故障分析接口"""
+        """Fault Analysis Interface"""
         try:
-            # 记录完整的请求数据，用于调试
+            # Record complete request data for debugging
             logger.info(f"Received analysis request: {request.json}")
             
-            # 从请求中获取参数
+            # Get parameters from the request
             data = request.json or {}
             filepath = data.get('filepath', '')
             file_content = data.get('file_content', '')
@@ -41,7 +75,7 @@ class AnalysisService:
 
             logger.info(f"Analysis parameters - Mode: {mode}, File: {filepath}")
             
-            # 读取文件内容
+            # Read file contents
             try:
                 logger.info(f"Reading file content from: {filepath}")
                 logger.info(f"File content read successfully, length: {len(file_content)}")
@@ -49,7 +83,7 @@ class AnalysisService:
                 logger.error(f"File read error: {str(e)}")
                 return jsonify({
                     'code': 500,
-                    'message': f'文件读取错误: {str(e)}'
+                    'message': f'File read error: {str(e)}'
                 }), 500
             
             logger.info(f"Starting analysis with mode: {mode}")
@@ -57,8 +91,6 @@ class AnalysisService:
 
             templates = load_user_templates()
 
-            # TODO 根据模式选择分析方法
-            # 需要实现以下两种分析方法
             if mode == 'prompt':
                 current_template = template or templates['prompt']
                 result = self._analyze_with_prompt(file_content=file_content, system_prompt=current_template, model_id=model_id)
@@ -71,7 +103,7 @@ class AnalysisService:
             else:
                 logger.error(f"Unsupported analysis mode: {mode}")
                 result = {
-                    'error': f'不支持的分析模式: {mode}'
+                    'error': f'Unsupported analysis mode: {mode}'
                 }
 
             return jsonify({
@@ -91,18 +123,17 @@ class AnalysisService:
             
     def execute_code(self, data):
         try:
-            # 获取代码
-            code = request.json.get('code', '')             # markdown 格式的代码
-            input_path = request.json.get('input_path', '') # 输入数据路径
+            code = request.json.get('code', '')             # Code in markdown format
+            input_path = request.json.get('input_path', '') # Input data path
             print("Code: ", code)
             print("Input path: ", input_path)
             logger.debug(f"Original code: {code}")
             logger.debug(f"Input path: {input_path}")
             final_code = process_markdown_code(code, input_path)
             logger.debug(f"Processed code: {final_code}")
-            # 捕获输出
+            # Capture output
             output = StringIO()
-            # 执行代码
+            # Execute code
             try:
                 result = run_code(code=final_code, output=output)
                 logger.debug(f"Code execution result: {result}")
@@ -129,7 +160,7 @@ class AnalysisService:
             return jsonify({
                 'code': 500,
                 'success': False,
-                'error': '代码执行超时'
+                'error': 'Code execution timeout'
             })
         except Exception as e:
             return jsonify({
@@ -141,8 +172,8 @@ class AnalysisService:
         
     def execute_batch(self, data):
         try:
-            raw_code = request.json.get('code', '')             # markdown 格式的代码
-            batch_data_path = request.json.get('input_path', '') # 输入数据路径
+            raw_code = request.json.get('code', '')
+            batch_data_path = request.json.get('input_path', '')
             executed_code = get_executed_python_code(raw_code)
             with open(batch_data_path, "r", encoding='utf-8') as f:
                 batch_data = json.load(f)
@@ -172,7 +203,7 @@ class AnalysisService:
                         "error_type": type(e).__name__
                     }
                     failed_results.append(error_info)
-                    logger.error(f"处理第 {i} 条数据失败: {str(e)}")
+                    logger.error(f"Failed to process the {i}th data: {str(e)}")
                     continue  # 继续处理下一条数据
                     # 统计信息
             
@@ -183,7 +214,7 @@ class AnalysisService:
                 "success_rate": f"{(success_count/total)*100:.2f}%"
             }
 
-            # 保存最终结果
+            # Save the final result
             final_results = {
                 "success_results": success_results,
                 "failed_results": failed_results,
@@ -211,18 +242,17 @@ class AnalysisService:
 
     def _analyze_with_prompt(self, file_content, system_prompt, model_id):
         """
-        Prompt模式分析
-        :param content: 文件内容
-        :param system_prompt: 系统提示词
-        :return: 分析结果
+        Prompt mode analysis
+        :param content: file content
+        :param system_prompt: system prompt words
+        :return: analysis results
         """
         system_prompt = str(system_prompt['prompt'])
         final_prompt = system_prompt + file_content
         try:
             logger.info(f"Starting prompt analysis \nSystem prompt length: {len(system_prompt)} \Content length: {len(file_content)}")
-            # import ipdb; ipdb.set_trace()
             messages, token_prompt, token_compli = api_request(prompt=final_prompt, model_name=model_id)
-            # 实现具体的 Prompt 分析逻辑
+            # Implement specific prompt analysis logic
             logger.info("Analysis completed successfully")
             result = {
                 'mode': 'prompt',
@@ -244,14 +274,14 @@ class AnalysisService:
 
     def _analyze_with_codegen(self, file_content, codegen_prompt, model_id):
         """
-        CodeGen模式分析
-        :param content: 文件内容
-        :param template: 生成模板
-        :return: 分析结果
+        CodeGen mode analysis
+        :param content: file content
+        :param template: generated template
+        :return: analysis results
         """
         final_prompt = codegen_prompt + file_content
         try:
-            # 实现具体的 CodeGen 分析逻辑
+            # Implement specific CodeGen analysis logic
             logger.info(f"Starting codegen analysis \nSystem prompt length: {len(codegen_prompt)} \Content length: {len(file_content)}")
             
             messages, token_prompt, token_compli = api_request(prompt=final_prompt, model_name=model_id)
@@ -275,16 +305,11 @@ class AnalysisService:
     
     def merge_codegen_template(self, raw_data, seed_content, template):
         try:
-            # 解析种子内容
-            # print("Seed content: ", seed_content)
-            # print("Template: ", template)
-            # print("Raw data: ", raw_data)
             seed_data = json.loads(seed_content) if isinstance(seed_content, str) else seed_content
             
-            # 在这里实现模板合并逻辑
-            # 例如：将种子数据插入到模板中的适当位置
+            # Implement template merging logic here
+            # For example: insert seed data into the appropriate position in the template
             merged_content = merge_codegen_template_en(raw_data, seed_data)
-            print("Merged content: ", merged_content)
             
             return merged_content
             
