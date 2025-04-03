@@ -73,7 +73,7 @@ python run.py
 - Open your browser and visit `http://localhost:5000`  
 
 3. Workflow  
-   - Upload a data file (JSON format supported)  
+   - Upload data file (support JSON format). Here we provide a test data set, download link [test_data10.json](https://github.com/Joserii/PowerInstruct/raw/refs/heads/main/example_data/test_data10.zip) 
    - Select the model to use (different models can be chosen for Seed Generation and Code Generation)  
    - Execute seed data generation  
    - Merge code generation templates  

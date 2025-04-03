@@ -74,7 +74,7 @@ python run.py
 - 打开浏览器访问 `http://localhost:5000`
 
 3. 使用流程
-   - 上传数据文件（支持JSON格式）
+   - 上传数据文件（支持JSON格式），这里我们提供了测试数据集，下载链接 [test_data10.json](https://github.com/Joserii/PowerInstruct/raw/refs/heads/main/example_data/test_data10.zip)
    - 选择使用的模型（Seed生成和Code生成可以选择不同模型）
    - 执行种子数据生成
    - 合并代码生成模板
